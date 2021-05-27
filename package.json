@@ -1,5 +1,5 @@
 {
-  "name": "@nestjs/passport",
+  "name": "@nestjs/passport-freshline",
   "version": "7.1.5",
   "description": "Nest - modern, fast, powerful node.js web framework (@passport)",
   "author": "Kamil Mysliwiec",
@@ -33,8 +33,8 @@
     "lint-staged": "11.0.0",
     "passport": "0.4.1",
     "prettier": "2.3.0",
-    "release-it": "14.7.0",
     "reflect-metadata": "0.1.13",
+    "release-it": "14.7.0",
     "rimraf": "3.0.2",
     "rxjs": "7.1.0",
     "typescript": "4.3.2"

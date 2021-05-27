@@ -23,9 +23,8 @@ export type IAuthGuard = CanActivate & {
   handleRequest<TUser = any>(err, user, info, context, status?): TUser;
   getAuthenticateOptions(context): IAuthModuleOptions | undefined;
 };
-export const AuthGuard: (
-  type?: string | string[]
-) => Type<IAuthGuard> = memoize(createAuthGuard);
+export const AuthGuard: (type?: string | string[]) => Type<IAuthGuard> =
+  memoize(createAuthGuard);
 
 const NO_STRATEGY_ERROR = `In order to use "defaultStrategy", please, ensure to import PassportModule in each place where AuthGuard() is being used. Otherwise, passport won't work correctly.`;
 
@@ -60,7 +59,9 @@ function createAuthGuard(type?: string | string[]): Type<CanActivate> {
     }
 
     getRequest<T = any>(context: ExecutionContext): T {
-      return context.switchToHttp().getRequest();
+      const ctx = context.getArgs()[1];
+
+      return ctx.req;
     }
 
     async logIn<TRequest extends { logIn: Function } = any>(
@@ -89,18 +90,15 @@ function createAuthGuard(type?: string | string[]): Type<CanActivate> {
   return guard;
 }
 
-const createPassportContext = (request, response) => (
-  type,
-  options,
-  callback: Function
-) =>
-  new Promise<void>((resolve, reject) =>
-    passport.authenticate(type, options, (err, user, info, status) => {
-      try {
-        request.authInfo = info;
-        return resolve(callback(err, user, info, status));
-      } catch (err) {
-        reject(err);
-      }
-    })(request, response, (err) => (err ? reject(err) : resolve()))
-  );
+const createPassportContext =
+  (request, response) => (type, options, callback: Function) =>
+    new Promise<void>((resolve, reject) =>
+      passport.authenticate(type, options, (err, user, info, status) => {
+        try {
+          request.authInfo = info;
+          return resolve(callback(err, user, info, status));
+        } catch (err) {
+          reject(err);
+        }
+      })(request, response, (err) => (err ? reject(err) : resolve()))
+    );
