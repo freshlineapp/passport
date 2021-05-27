@@ -41,10 +41,8 @@ function createAuthGuard(type) {
         canActivate(context) {
             return __awaiter(this, void 0, void 0, function* () {
                 const options = Object.assign(Object.assign(Object.assign({}, options_1.defaultOptions), this.options), this.getAuthenticateOptions(context));
-                const [request, response] = [
-                    this.getRequest(context),
-                    context.switchToHttp().getResponse()
-                ];
+                const request = context.getArgByIndex(2).req;
+                const response = context.switchToHttp().getResponse();
                 const passportFn = createPassportContext(request, response);
                 const user = yield passportFn(type || this.options.defaultStrategy, options, (err, user, info, status) => this.handleRequest(err, user, info, context, status));
                 request[options.property || options_1.defaultOptions.property] = user;
@@ -52,8 +50,7 @@ function createAuthGuard(type) {
             });
         }
         getRequest(context) {
-            const ctx = context.getArgs()[1];
-            return ctx.req;
+            return context.getArgByIndex(2).req;
         }
         logIn(request) {
             return __awaiter(this, void 0, void 0, function* () {

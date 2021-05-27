@@ -43,10 +43,8 @@ function createAuthGuard(type?: string | string[]): Type<CanActivate> {
         ...this.options,
         ...this.getAuthenticateOptions(context)
       };
-      const [request, response] = [
-        this.getRequest(context),
-        context.switchToHttp().getResponse()
-      ];
+      const request = context.getArgByIndex(2).req;
+      const response = context.switchToHttp().getResponse();
       const passportFn = createPassportContext(request, response);
       const user = await passportFn(
         type || this.options.defaultStrategy,
@@ -59,9 +57,7 @@ function createAuthGuard(type?: string | string[]): Type<CanActivate> {
     }
 
     getRequest<T = any>(context: ExecutionContext): T {
-      const ctx = context.getArgs()[1];
-
-      return ctx.req;
+      return context.getArgByIndex(2).req;
     }
 
     async logIn<TRequest extends { logIn: Function } = any>(
